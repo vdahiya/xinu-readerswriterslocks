@@ -1,0 +1,42 @@
+#ifndef _LOCK_H_
+#define _LOCK_H_
+
+#ifndef	NLOCK
+#define	NLOCK		50	/* number of locks, if not defined	*/
+#endif
+
+// Re-define the states
+#define	LFREE	'\01'		/* this lock is free		*/
+#define	LUSED	'\02'		/* this lock is used, set during intialize		*/
+#define LRDONLY	'\03'		/* Currently has only reader locks */
+#define LWRONLY '\04'		/* Currently has only Writer locks */
+#define LRWBOTH	'\05'		/* Has both reader and writer locks in queue */
+#define READ 	(1)
+#define WRITE 	(2)
+
+struct	lentry	{		/* lock table entry			*/
+	char	lstate;		/* the state LFREE or LUSED		*/
+	int	rdrcount;	/* count for this lock 			*/
+	int	lqhead;		/* q index of head of list		*/
+	int	lqtail;		/* q index of tail of list		*/
+	int 	rdlock;         /* Read mutex				*/
+	int 	wrlock; 	/* Write mutex 				*/
+};
+
+struct  lentry  locktable[NLOCK];    /* lock table                           */
+int     nextlock;               /* next lock slot to use in lcreate     */
+
+#define	isbadlock(s)	(s<0 || s>=NLOCK)
+
+SYSCALL lcreate(void);
+void linit(void);
+int ldelete(int);
+int lock(int, int, int );
+//int releaseall(int, ...);
+SYSCALL writeLockRelease (int );
+SYSCALL readLockAcquire(int ldes, int priority);
+SYSCALL readLockRelease (int ldes);
+SYSCALL writeLockAcquire (int ldes, int priority);
+int insertlock(int proc, int head, int key, int type);
+#endif
+

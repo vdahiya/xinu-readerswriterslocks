@@ -1,0 +1,53 @@
+void priority_inheritance(int ldes, int pid)
+{
+        // REMOVE
+        //return;
+        int i;
+        if(ldes==-1)
+        {
+                printf("priority_inheritance, LDES is -1 \n");
+                return;
+        }
+        for(i=0;i<NPROC;i++)
+        {
+
+                if(locktable[ldes].procArray[i] > 0)
+                {
+                        //process i holds the lock ldes, so see if you need to update it priority.
+
+                        if(proctab[pid].pinh > 0)
+                        {
+                                if(proctab[i].pinh > 0)
+                                {
+                                        if(proctab[pid].pinh > proctab[i].pinh)
+                                                proctab[i].pinh = proctab[pid].pinh;
+                                }
+
+                                else
+                                {
+                                        if(proctab[pid].pinh > proctab[i].pprio)
+                                                proctab[i].pinh = proctab[pid].pinh;
+
+                                }
+
+                        }
+                        else
+                        {
+                                if(proctab[i].pinh > 0)
+                                {
+                                        if(proctab[pid].pprio > proctab[i].pinh)
+                                                proctab[i].pinh = proctab[pid].pprio;
+                                }
+                                else
+                                {
+                                          if(proctab[pid].pprio > proctab[i].pprio)
+                                                                                                                                       proctab[i].pinh = proctab[pid].pprio;
+                                }
+
+                        }
+                        //printf("\nUpdated pinh for process %d is %d\n",i,proctab[i].pinh);
+                        priority_inheritance(proctab[i].plock,i);
+
+                }
+
+

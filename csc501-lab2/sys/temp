@@ -1,0 +1,58 @@
+void priority_inheritance(int ldes, int waitproc)
+{
+
+	
+	//needs to be called every time a process is about to wait on a lock.
+	int i;
+	if(ldes==-1)
+       		 return;
+
+	for(i=0;i<50;i++)
+	{
+
+        	if(locks[ldes].lpids[i] > 0)
+        	{
+                	//process i holds the lock ldes, so see if you need to update it priority.
+
+                	if(proctab[waitproc].pinh > 0)
+                	{
+                        	if(proctab[i].pinh > 0)
+                        	{
+                                	if(proctab[waitproc].pinh > proctab[i].pinh)
+                                        	proctab[i].pinh = proctab[waitproc].pinh;
+                        	}
+
+                        	else
+                        	{
+                                	if(proctab[waitproc].pinh > proctab[i].pprio)
+                                        	proctab[i].pinh = proctab[waitproc].pinh;
+
+                        	}
+
+                	}
+                	else
+                	{
+                        	if(proctab[i].pinh > 0)
+                        	{
+                                	if(proctab[waitproc].pprio > proctab[i].pinh)
+                                        	proctab[i].pinh = proctab[waitproc].pprio;
+                        	}
+                        	else
+                        	{
+     		                	  if(proctab[waitproc].pprio > proctab[i].pprio)
+                                        	proctab[i].pinh = proctab[waitproc].pprio;
+                        	}
+
+                	}
+                	priority_inheritance(proctab[i].plock,i);
+
+        	}
+
+
+
+	}	
+
+
+return ;
+
+}
